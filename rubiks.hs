@@ -33,6 +33,12 @@ solvedFace colour = Face (colour, colour, colour, colour, colour, colour, colour
 
 solvedCube = Cube (solvedFace White, solvedFace Orange, solvedFace Green, solvedFace Red, solvedFace Blue, solvedFace Yellow)
 
+
+-- On the Rubik's Cube, doing a basic transformation thrice is like doing its inverse 
+--  because the basic transformations have order 4
+inverse4 :: (a -> a) -> a -> a
+inverse4 f = f . f . f
+
 ----------------
 -- Cube turns --
 ----------------
@@ -56,24 +62,39 @@ r (Cube (Face (s11,s12,s13,s14,s15,s16,s17,s18,s19),
 
 -- Turn right face a quarter turn anti-clockwise
 r' :: Cube -> Cube
-r' cube = r$r$r cube
+r' = inverse4 r
 
 -- Turn the right face a half turn
 r2 :: Cube -> Cube
-r2 cube = r$r cube
+r2 = r . r
 
 
+-- todo: implement f, b, d and associated turns
 
--- todo: implement f, l, u, b, d and associated turns
+l :: Cube -> Cube 
+l = y2 . r . y2 
 
+l' :: Cube -> Cube
+l' = y2 . r' . y2
 
+l2 :: Cube -> Cube
+l2 = y2 . r2 . y2
+
+u :: Cube -> Cube
+u = z . r . z'
+
+u' :: Cube -> Cube
+u' = z . r' . z'
+
+u2 :: Cube -> Cube
+u2 = z . r2 . z'
 
 -- Face rotation
 clockwise :: Face -> Face
 clockwise ( Face (s1,s2,s3,s4,s5,s6,s7,s8,s9) ) = Face (s7,s4,s1,s8,s5,s2,s9,s6,s3) 
 
 anticlockwise :: Face -> Face
-anticlockwise face = clockwise $ clockwise $ clockwise face
+anticlockwise = inverse4 clockwise
 
 --------------------
 -- Cube rotations --
@@ -85,10 +106,30 @@ anticlockwise face = clockwise $ clockwise $ clockwise face
 y :: Cube -> Cube
 y ( Cube (f1, f2, f3, f4, f5, f6) ) = Cube ((clockwise f1), f3, f4, f5, f2, (anticlockwise f6))
 
+y' :: Cube -> Cube
+y' = inverse4 y
+
+y2 :: Cube -> Cube
+y2 = y . y
+
 -- Rotating like the r move
 --  or Turning Face 3 to Face 1
-
 x :: Cube -> Cube
 x ( Cube (f1, f2, f3, f4, f5, f6) ) = Cube (f3, (anticlockwise f2), f6, (clockwise f4), f1, f5)
 
--- todo: implement z rotation 
+x' :: Cube -> Cube
+x' = inverse4 x
+
+x2 :: Cube -> Cube
+x2 = x . x
+
+-- Rotating like the f move
+--  or Turning Face 2 to Face 1
+z :: Cube -> Cube
+z ( Cube (f1, f2, f3, f4, f5, f6) ) = Cube ( f2, f6, (clockwise f3), f1, (anticlockwise f5), f4)
+
+z' :: Cube -> Cube
+z' = inverse4 z
+
+z2 :: Cube -> Cube
+z2 = z . z
