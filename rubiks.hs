@@ -6,6 +6,11 @@
 -- lookout for todos! 
 
 
+-- warning:
+-- Rubiks cube notation is applied left to right
+-- Functions in haskell are applied right to left
+
+
 data Sticker = White | Orange | Green | Red | Blue | Yellow deriving Show
 
 -- Order of stickers on each face: 
@@ -37,7 +42,7 @@ solvedCube = Cube (solvedFace White, solvedFace Orange, solvedFace Green, solved
 -- On the Rubik's Cube, doing a basic transformation thrice is like doing its inverse 
 --  because the basic transformations have order 4
 inverse4 :: (a -> a) -> a -> a
-inverse4 f = f . f . f
+inverse4 fn = fn . fn . fn
 
 ----------------
 -- Cube turns --
@@ -68,9 +73,6 @@ r' = inverse4 r
 r2 :: Cube -> Cube
 r2 = r . r
 
-
--- todo: implement f, b, d and associated turns
-
 l :: Cube -> Cube 
 l = y2 . r . y2 
 
@@ -81,13 +83,40 @@ l2 :: Cube -> Cube
 l2 = y2 . r2 . y2
 
 u :: Cube -> Cube
-u = z . r . z'
+u = z' . r . z
 
 u' :: Cube -> Cube
-u' = z . r' . z'
+u' = z' . r' . z
 
 u2 :: Cube -> Cube
-u2 = z . r2 . z'
+u2 = z' . r2 . z
+
+f :: Cube -> Cube
+f = y . r . y'
+
+f' :: Cube -> Cube
+f' = y . r' . y'
+
+f2 :: Cube -> Cube
+f2 = y . r2 . y'
+
+b :: Cube -> Cube
+b = y' . r . y
+
+b' :: Cube -> Cube
+b' = y' . r' . y
+
+b2 :: Cube -> Cube
+b2 = y' . r2 . y
+
+d :: Cube -> Cube
+d = z . r . z'
+
+d' :: Cube -> Cube
+d' = z . r' . z'
+
+d2 :: Cube -> Cube
+d2 = z . r2 . z'
 
 -- Face rotation
 clockwise :: Face -> Face
@@ -133,3 +162,9 @@ z' = inverse4 z
 
 z2 :: Cube -> Cube
 z2 = z . z
+
+-- todo: Takes a rubiks cube algorithm in a string and makes it a function
+-- example input: "R U R' U'"
+-- example output: a function that does the same thing as u'.r'.u.r
+alg :: String -> (Cube -> Cube)
+
