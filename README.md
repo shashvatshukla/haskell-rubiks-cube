@@ -1,0 +1,1 @@
+# Haskell Rubik's Cube
